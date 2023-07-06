@@ -1,7 +1,7 @@
 package Jitflix.Jitflix.service;
 
 import Jitflix.Jitflix.entity.Movie;
-import Jitflix.Jitflix.repository.MovieRepository;
+import Jitflix.Jitflix.repository.mongo.MovieRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

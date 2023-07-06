@@ -1,24 +1,24 @@
-package Jitflix.Jitflix.entity;
+package Jitflix.Jitflix.entity.pg;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-@Getter // generates getters for all fields
-@Setter // generates setters for all fields
+@Getter
+@Setter
 @NoArgsConstructor
 @Entity
-public class User {
+public class PlatformUser {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId;
     private String firstName;
     private String lastName;
     @Column(unique = true)
-    @NotEmpty(message = "email cannot be empty or null")
+    @NotBlank(message = "email cannot be empty or null")
     private String email;
     private String hashedPassword;
     private String language;
@@ -26,6 +26,6 @@ public class User {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> ipAddresses;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "platformUser", cascade = CascadeType.ALL)
     private List<ViewingHistory> viewingHistories;
 }

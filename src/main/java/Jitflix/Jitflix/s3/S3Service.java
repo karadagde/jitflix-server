@@ -73,11 +73,13 @@ public class S3Service {
     }
 
     public byte[] getObject(String bucketName, String key){
+        System.out.println("bucketName: " + bucketName);
+        System.out.println("key: " + key);
         GetObjectRequest objectRequest = GetObjectRequest.builder()
                 .key(key)
                 .bucket(bucketName)
                 .build();
-
+        System.out.println("objectRequest: " + objectRequest.toString());
         CompletableFuture<ResponseBytes<GetObjectResponse>> futureBytes = s3Client.getObject(objectRequest,AsyncResponseTransformer.toBytes());
 
         try {
@@ -87,21 +89,6 @@ public class S3Service {
         }
 
     }
-
-    public Integer uploadDirectory(S3TransferManager transferManager,
-                                   String sourceDirectory, String bucketName){
-        DirectoryUpload directoryUpload =
-                transferManager.uploadDirectory(UploadDirectoryRequest.builder()
-                        .source(Paths.get(sourceDirectory))
-                        .bucket(s3Buckets.getBucket())
-                        .build());
-
-        CompletedDirectoryUpload completedDirectoryUpload = directoryUpload.completionFuture().join();
-        completedDirectoryUpload.failedTransfers().forEach(fail ->
-                System.out.println("Object [{}] failed to transfer"+ fail.toString()));
-        return completedDirectoryUpload.failedTransfers().size();
-    }
-
 
 
     public String uploadFile(S3TransferManager transferManager, String bucketName,

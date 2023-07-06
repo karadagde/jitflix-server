@@ -1,4 +1,4 @@
-package Jitflix.Jitflix.repository;
+package Jitflix.Jitflix.repository.mongo;
 
 import java.util.List;
 

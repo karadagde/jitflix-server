@@ -15,10 +15,13 @@ public class S3Config {
     private  String awsRegion;
     @Bean
     public S3AsyncClient s3Client() {
-    return S3AsyncClient.builder()
-            .overrideConfiguration(b -> b.apiCallTimeout(Duration.ofSeconds(500)).apiCallAttemptTimeout(Duration.ofSeconds(500)))
-        .region(Region.of(awsRegion))
-        .build();
+    return S3AsyncClient.crtBuilder().region(Region.of(awsRegion)).build();
+
+
+//            .builder()
+//            .overrideConfiguration(b -> b.apiCallTimeout(Duration.ofSeconds(500)).apiCallAttemptTimeout(Duration.ofSeconds(500)))
+//        .region(Region.of(awsRegion))
+//        .build();
 
     }
     @Bean

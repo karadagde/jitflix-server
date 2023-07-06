@@ -1,4 +1,4 @@
-package Jitflix.Jitflix.entity;
+package Jitflix.Jitflix.entity.pg;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -18,7 +18,7 @@ public class ViewingHistory {
 
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
-    private User user;
+    private PlatformUser platformUser;
 
     private String movieId;
 
