@@ -4,12 +4,15 @@ import Jitflix.Jitflix.entity.Movie;
 import Jitflix.Jitflix.s3.S3Buckets;
 import Jitflix.Jitflix.s3.S3Service;
 import Jitflix.Jitflix.service.MovieService;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -47,17 +50,53 @@ public class MovieController {
 
 
 
-    @GetMapping("/watch/{movieId}/playlist")
-    public ResponseEntity<?> getPlaylist(@PathVariable String movieId) throws IOException{
-        Movie movie = movieService.getMovieById(movieId);
-//        String movieLocation = movie.getBucketUrl();
-        System.out.println(movie);
-        if (movie == null) {
-            return ResponseEntity.ok("Movie not found");
-        }
+//    @GetMapping("/watch/{movieId}/playlist")
+//    public ResponseEntity<?> getPlaylist(@PathVariable String movieId) throws IOException{
+//        Movie movie = movieService.getMovieById(movieId);
+////        String movieLocation = movie.getBucketUrl();
+//        System.out.println(movie);
+//        if (movie == null) {
+//            return ResponseEntity.ok("Movie not found");
+//        }
+//
+//        byte[] playlistResource =  s3Service.getObject(s3Buckets.getBucket(), movieId +"/output_playlist.m3u8");
+//        if (playlistResource.length > 0) {
+//            return ResponseEntity.ok()
+//                    .contentType(MediaType.parseMediaType("application/vnd.apple.mpegurl"))
+//                    .body(playlistResource);
+//        } else {
+//            return ResponseEntity.ok("Master playlist not found");
+//        }
+//    }
+//
+//    @GetMapping("/watch/{movieId}/{segment}.ts")
+//    public ResponseEntity<byte[]> getSegment(@PathVariable String movieId, @PathVariable String segment) throws IOException {
+//        Movie movie = movieService.getMovieById(movieId);
+//        if (movie == null) {
+//            return ResponseEntity.ok("Movie not found".getBytes());
+//        }
+//
+//        byte[] segmentResource =  s3Service.getObject(s3Buckets.getBucket(), movieId + "/"  + segment + ".ts");
+//
+//        if (segmentResource.length > 0) {
+//            return ResponseEntity.ok()
+//                    .contentType(MediaType.parseMediaType("video/MP2T"))
+//                    .body(segmentResource);
+//        } else {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
 
-        byte[] playlistResource =  s3Service.getObject(s3Buckets.getBucket(), movieId +"/output_playlist.m3u8");
-        if (playlistResource.length > 0) {
+
+    // read local data instead of s3 due to free tier limitations
+
+    @GetMapping("/watch/{movieId}/playlist/local")
+    public ResponseEntity<?> getMasterLocal(@PathVariable String movieId) throws IOException{
+
+
+
+        Resource playlistResource = new FileSystemResource(Paths.get(System.getProperty("user.home") + "/Desktop/movie-test/" + movieId) + "/master.m3u8");
+        if (playlistResource.exists()) {
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType("application/vnd.apple.mpegurl"))
                     .body(playlistResource);
@@ -66,16 +105,26 @@ public class MovieController {
         }
     }
 
-    @GetMapping("/watch/{movieId}/{segment}.ts")
-    public ResponseEntity<byte[]> getSegment(@PathVariable String movieId, @PathVariable String segment) throws IOException {
-        Movie movie = movieService.getMovieById(movieId);
-        if (movie == null) {
-            return ResponseEntity.ok("Movie not found".getBytes());
+    @GetMapping("/watch/{movieId}/playlist/output/{videoQuality}/output.m3u8")
+    public ResponseEntity<?> getPlaylistLocal(@PathVariable String movieId, @PathVariable String videoQuality) throws IOException {
+
+
+        Resource segmentResource = new FileSystemResource(Paths.get(System.getProperty("user.home") + "/Desktop/movie-test/" + movieId) + "/output/" + videoQuality + "/output.m3u8");
+
+        if (segmentResource.exists()) {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType("video/MP2T"))
+                    .body(segmentResource);
+        } else {
+            return ResponseEntity.notFound().build();
         }
+    }  @GetMapping("/watch/{movieId}/playlist/output/{videoQuality}/{segment}.ts")
+    public ResponseEntity<?> getSegmentLocal(@PathVariable String movieId, @PathVariable String segment, @PathVariable String videoQuality) throws IOException {
 
-        byte[] segmentResource =  s3Service.getObject(s3Buckets.getBucket(), movieId + "/"  + segment + ".ts");
 
-        if (segmentResource.length > 0) {
+        Resource segmentResource = new FileSystemResource(Paths.get(System.getProperty("user.home") + "/Desktop/movie-test/" + movieId) + "/output/" + videoQuality + "/" + segment + ".ts");
+
+        if (segmentResource.exists()) {
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType("video/MP2T"))
                     .body(segmentResource);
