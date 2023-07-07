@@ -4,6 +4,7 @@ import Jitflix.Jitflix.entity.Movie;
 import Jitflix.Jitflix.s3.S3Buckets;
 import Jitflix.Jitflix.s3.S3Service;
 import Jitflix.Jitflix.service.MovieService;
+import org.hibernate.annotations.Parameter;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
@@ -30,9 +31,9 @@ public class MovieController {
     }
 
     @GetMapping("/all")
-    public Page<Movie> getAllMovies() {
+    public Page<Movie> getAllMovies(@RequestParam int page, @RequestParam int size) {
 
-        return movieService.getAllMovies();
+        return movieService.getAllMovies(page, size);
 
     }
 

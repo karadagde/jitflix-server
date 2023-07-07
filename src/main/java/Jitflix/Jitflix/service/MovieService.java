@@ -3,6 +3,7 @@ package Jitflix.Jitflix.service;
 import Jitflix.Jitflix.entity.Movie;
 import Jitflix.Jitflix.repository.mongo.MovieRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +23,8 @@ public class MovieService {
         return movieRepository.findById(id).orElse(null);
     }
 
-    public Page<Movie> getAllMovies(){
-        return movieRepository.findAll(Pageable.ofSize(20));
+    public Page<Movie> getAllMovies(int page, int size){
+        return movieRepository.findAll(PageRequest.of(page, size));
     }
 
     public Movie saveMovie(Movie movie){
