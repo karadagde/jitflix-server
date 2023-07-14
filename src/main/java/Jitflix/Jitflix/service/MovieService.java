@@ -25,6 +25,8 @@ public class MovieService {
 
     public Page<Movie> getAllMovies(int page, int size){
         return movieRepository.findAll(PageRequest.of(page, size));
+    } public List<Movie> getEntireMovies(){
+        return movieRepository.findAll();
     }
 
     public Movie saveMovie(Movie movie){

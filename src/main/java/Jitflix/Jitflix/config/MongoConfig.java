@@ -54,7 +54,7 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
         public Movie convert(Document source) {
             Movie movie = new Movie();
             System.out.println(source.getString("id"));
-            System.out.println(source);
+            System.out.println(source.getString("title"));
 
             movie.setId(source.getObjectId("_id") != null ? source.getObjectId("_id").toHexString() : "");
 

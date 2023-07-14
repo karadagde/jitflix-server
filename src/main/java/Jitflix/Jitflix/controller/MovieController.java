@@ -35,6 +35,11 @@ public class MovieController {
 
         return movieService.getAllMovies(page, size);
 
+    }@GetMapping("/all/no-page")
+    public List<Movie> getEntireMovies() {
+
+        return movieService.getEntireMovies();
+
     }
 
     @GetMapping("/{movieId}")
