@@ -4,6 +4,8 @@ import Jitflix.Jitflix.entity.Movie;
 import Jitflix.Jitflix.s3.S3Buckets;
 import Jitflix.Jitflix.s3.S3Service;
 import Jitflix.Jitflix.service.MovieService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.hibernate.annotations.Parameter;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -17,7 +19,9 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
+
 @RequestMapping("/movies")
+
 public class MovieController {
 
     private final MovieService movieService;
@@ -30,10 +34,11 @@ public class MovieController {
         this.s3Buckets = s3Buckets;
     }
 
-    @GetMapping("/all")
-    public Page<Movie> getAllMovies(@RequestParam int page, @RequestParam int size) {
 
-        return movieService.getAllMovies(page, size);
+    @GetMapping("/all")
+    public Page<Movie> getAllMovies(@RequestParam int page, @RequestParam int size, HttpServletRequest request, HttpServletResponse response) {
+        System.out.println(request);
+        return movieService.getAllMovies(page=0, size=20);
 
     }@GetMapping("/all/no-page")
     public List<Movie> getEntireMovies() {
