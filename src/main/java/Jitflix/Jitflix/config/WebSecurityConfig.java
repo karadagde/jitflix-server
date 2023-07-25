@@ -32,26 +32,44 @@ public class WebSecurityConfig {
 //	                .authorizeHttpRequests(authorize -> authorize
 //                        .anyRequest().permitAll()
 //                )
+//        http
+//                .cors(c-> c.configurationSource(request -> {
+//                            CorsConfiguration conf =  new CorsConfiguration();
+//                            conf.setAllowedOrigins(List.of("http://localhost:4200"));
+//                            conf.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
+//                            return conf;
+//                        }
+//                ));
+
+
+
 
         return http.build();
     }
 
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+
+
+//    @Bean
+//    CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+//        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedMethods("*");
+//                registry.addMapping("/**").allowedMethods("*");
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:4200")  // Specify the exact client origin here.
+                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
             }
         };
     }
