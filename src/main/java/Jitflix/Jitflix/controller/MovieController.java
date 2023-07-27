@@ -6,7 +6,6 @@ import Jitflix.Jitflix.s3.S3Service;
 import Jitflix.Jitflix.service.MovieService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.hibernate.annotations.Parameter;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
@@ -20,7 +19,7 @@ import java.util.List;
 
 @RestController
 
-@RequestMapping("/movies")
+@RequestMapping("/api/v1")
 
 public class MovieController {
 
@@ -28,7 +27,8 @@ public class MovieController {
     private final S3Service s3Service;
     private final S3Buckets s3Buckets;
 
-    public MovieController(MovieService movieService, S3Service s3Service, S3Buckets s3Buckets) {
+    public MovieController(MovieService movieService, S3Service s3Service,
+                           S3Buckets s3Buckets) {
         this.movieService = movieService;
         this.s3Service = s3Service;
         this.s3Buckets = s3Buckets;
@@ -36,11 +36,16 @@ public class MovieController {
 
 
     @GetMapping("/all")
-    public Page<Movie> getAllMovies(@RequestParam int page, @RequestParam int size, HttpServletRequest request, HttpServletResponse response) {
+    public Page<Movie> getAllMovies(@RequestParam int page,
+                                    @RequestParam int size,
+                                    HttpServletRequest request,
+                                    HttpServletResponse response) {
         System.out.println(request);
-        return movieService.getAllMovies(page=0, size=20);
+        return movieService.getAllMovies(page = 0, size = 20);
 
-    }@GetMapping("/all/no-page")
+    }
+
+    @GetMapping("/all/no-page")
     public List<Movie> getEntireMovies() {
 
         return movieService.getEntireMovies();
@@ -48,17 +53,14 @@ public class MovieController {
     }
 
     @GetMapping("/{movieId}")
-    public Movie getMovieById(@PathVariable String movieId)
-    {
+    public Movie getMovieById(@PathVariable String movieId) {
         return movieService.getMovieById(movieId);
     }
 
     @GetMapping("/title/{title}")
-        public List<Movie> getMovieByTitle(@PathVariable String title){
+    public List<Movie> getMovieByTitle(@PathVariable String title) {
         return movieService.getMovieByTitle(title);
     }
-
-
 
 
 //    @GetMapping("/watch/{movieId}/playlist")
@@ -102,14 +104,17 @@ public class MovieController {
     // read local data instead of s3 due to free tier limitations
 
     @GetMapping("/watch/{movieId}/playlist/local")
-    public ResponseEntity<?> getMasterLocal(@PathVariable String movieId) throws IOException{
+    public ResponseEntity<?> getMasterLocal(@PathVariable String movieId) throws
+            IOException {
 
 
-
-        Resource playlistResource = new FileSystemResource(Paths.get(System.getProperty("user.home") + "/Desktop/movie-test/" + movieId) + "/master.m3u8");
+        Resource playlistResource = new FileSystemResource(Paths.get(
+                System.getProperty("user.home") + "/Desktop/movie-test/" +
+                movieId) + "/master.m3u8");
         if (playlistResource.exists()) {
             return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType("application/vnd.apple.mpegurl"))
+                    .contentType(MediaType.parseMediaType(
+                            "application/vnd.apple.mpegurl"))
                     .body(playlistResource);
         } else {
             return ResponseEntity.ok("Master playlist not found");
@@ -117,10 +122,15 @@ public class MovieController {
     }
 
     @GetMapping("/watch/{movieId}/playlist/output/{videoQuality}/output.m3u8")
-    public ResponseEntity<?> getPlaylistLocal(@PathVariable String movieId, @PathVariable String videoQuality) throws IOException {
+    public ResponseEntity<?> getPlaylistLocal(@PathVariable String movieId,
+                                              @PathVariable
+                                              String videoQuality) throws
+            IOException {
 
 
-        Resource segmentResource = new FileSystemResource(Paths.get(System.getProperty("user.home") + "/Desktop/movie-test/" + movieId) + "/output/" + videoQuality + "/output.m3u8");
+        Resource segmentResource = new FileSystemResource(Paths.get(
+                System.getProperty("user.home") + "/Desktop/movie-test/" +
+                movieId) + "/output/" + videoQuality + "/output.m3u8");
 
         if (segmentResource.exists()) {
             return ResponseEntity.ok()
@@ -129,11 +139,19 @@ public class MovieController {
         } else {
             return ResponseEntity.notFound().build();
         }
-    }  @GetMapping("/watch/{movieId}/playlist/output/{videoQuality}/{segment}.ts")
-    public ResponseEntity<?> getSegmentLocal(@PathVariable String movieId, @PathVariable String segment, @PathVariable String videoQuality) throws IOException {
+    }
+
+    @GetMapping("/watch/{movieId}/playlist/output/{videoQuality}/{segment}.ts")
+    public ResponseEntity<?> getSegmentLocal(@PathVariable String movieId,
+                                             @PathVariable String segment,
+                                             @PathVariable
+                                             String videoQuality) throws
+            IOException {
 
 
-        Resource segmentResource = new FileSystemResource(Paths.get(System.getProperty("user.home") + "/Desktop/movie-test/" + movieId) + "/output/" + videoQuality + "/" + segment + ".ts");
+        Resource segmentResource = new FileSystemResource(Paths.get(
+                System.getProperty("user.home") + "/Desktop/movie-test/" +
+                movieId) + "/output/" + videoQuality + "/" + segment + ".ts");
 
         if (segmentResource.exists()) {
             return ResponseEntity.ok()
