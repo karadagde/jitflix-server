@@ -1,8 +1,5 @@
 package Jitflix.Jitflix.config;
 
-import java.util.Properties;
-import javax.sql.DataSource;
-
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,12 +14,15 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.sql.DataSource;
+import java.util.Properties;
+
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
         entityManagerFactoryRef = "entityManagerFactory",
         transactionManagerRef = "transactionManager",
-        basePackages = { "Jitflix.Jitflix.repository.pg" }
+        basePackages = {"Jitflix.Jitflix.repository.pg"}
 )
 public class PostgresConfig {
 
@@ -38,7 +38,7 @@ public class PostgresConfig {
     @Primary
     @Bean(name = "dataSource")
     public DataSource dataSource() {
-        System.out.println("dataSource");
+
         return DataSourceBuilder.create()
                 .url(dataSourceUrl)
                 .username(dataSourceUsername)
@@ -57,22 +57,24 @@ public class PostgresConfig {
         em.setPackagesToScan("Jitflix.Jitflix.entity.pg");
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         em.setJpaProperties(additionalProperties());
-        System.out.println("entityManagerFactory");
+
         return em;
     }
 
     @Primary
     @Bean(name = "transactionManager")
     public PlatformTransactionManager transactionManager(
-            @Qualifier("entityManagerFactory") EntityManagerFactory entityManagerFactory) {
-        System.out.println("transactionManager");
+            @Qualifier("entityManagerFactory")
+            EntityManagerFactory entityManagerFactory) {
+
         return new JpaTransactionManager(entityManagerFactory);
     }
 
 
     private Properties additionalProperties() {
         Properties properties = new Properties();
-        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+        properties.setProperty("hibernate.dialect",
+                "org.hibernate.dialect.PostgreSQLDialect");
         return properties;
     }
 

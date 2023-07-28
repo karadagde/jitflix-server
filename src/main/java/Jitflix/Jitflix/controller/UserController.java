@@ -1,7 +1,7 @@
 package Jitflix.Jitflix.controller;
 
-import Jitflix.Jitflix.entity.pg.PlatformUser;
-import Jitflix.Jitflix.service.PlatformUserService;
+import Jitflix.Jitflix.entity.pg.AppUser;
+import Jitflix.Jitflix.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,60 +11,30 @@ import java.io.IOException;
 @RequestMapping("/users")
 public class UserController {
 
-    private final PlatformUserService platformUserService;
+    private final UserService userService;
 
-    public UserController(PlatformUserService platformUserService) {
-        this.platformUserService = platformUserService;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
-
-
-//    @GetMapping()
-//    public String getUsers() {
-//        return "Users";
-//    }
 
     @GetMapping("/user/{email}")
-    public PlatformUser getUserByEmail(@PathVariable String email) {
-        return platformUserService.getUserByEmail(email);
+    public AppUser getUserByEmail(@PathVariable String email) {
+        return userService.getUserByEmail(email);
     }
-
-
-//    @PostMapping(path = "/signup", consumes = "application/json", produces = "application/json")
-//    public ResponseEntity<PlatformUser> createUser(@RequestBody PlatformUser platformUser) throws IOException {
-//
-//        var user = platformUserService.getUserByEmail(platformUser.getEmail());
-//
-//        if (user != null) {
-//            return ResponseEntity.badRequest().body(null);
-//        }
-//
-//        try {
-//            PlatformUser newPlatformUser = platformUserService.saveUser(platformUser);
-//            if (newPlatformUser != null) {
-//                return ResponseEntity.ok(newPlatformUser);
-//            } else {
-//                return ResponseEntity.badRequest().body(null);
-//            }
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body(null);
-//        }
-//
-//
-//    }
 
     @PutMapping(path = "/update", consumes = "application/json",
                 produces = "application/json")
-    public ResponseEntity<PlatformUser> updateUser(
-            @RequestBody PlatformUser platformUser) throws IOException {
+    public ResponseEntity<AppUser> updateUser(
+            @RequestBody AppUser platformUser) throws IOException {
 
-        var user = platformUserService.getUserByEmail(platformUser.getEmail());
+        var user = userService.getUserByEmail(platformUser.getEmail());
 
         if (user == null) {
             return ResponseEntity.badRequest().body(null);
         }
 
         try {
-            PlatformUser updatedPlatformUser = platformUserService.updateUser(
+            AppUser updatedPlatformUser = userService.updateUser(
                     platformUser);
             if (updatedPlatformUser != null) {
                 return ResponseEntity.ok(updatedPlatformUser);

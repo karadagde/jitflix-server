@@ -25,7 +25,8 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(c -> c.disable());
+//        http.csrf(c -> c.disable());
+        http.csrf(c -> c.ignoringRequestMatchers("/api/v1/auth/**"));
         http.cors(c -> c.configurationSource(request -> {
                     CorsConfiguration conf = new CorsConfiguration();
                     conf.setAllowedOrigins(List.of("http://localhost:4200"));
@@ -50,7 +51,7 @@ public class WebSecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class);
 
-//        http.httpBasic(withDefaults());
+
         return http.build();
     }
 

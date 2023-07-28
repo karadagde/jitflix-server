@@ -16,7 +16,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Entity
-public class PlatformUser implements UserDetails {
+
+public class AppUser implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId;
@@ -25,13 +26,13 @@ public class PlatformUser implements UserDetails {
     @Column(unique = true)
     @NotBlank(message = "email cannot be empty or null")
     private String email;
-    private String hashedPassword;
+    private String password;
     private String language;
     private String country;
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> ipAddresses;
+//    @ElementCollection(fetch = FetchType.EAGER)
+//    private List<String> ipAddresses;
 
-    @OneToMany(mappedBy = "platformUser", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
     private List<ViewingHistory> viewingHistories;
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -43,7 +44,7 @@ public class PlatformUser implements UserDetails {
 
     @Override
     public String getPassword() {
-        return hashedPassword;
+        return password;
     }
 
     @Override

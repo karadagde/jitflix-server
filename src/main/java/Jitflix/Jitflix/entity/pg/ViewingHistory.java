@@ -18,7 +18,7 @@ public class ViewingHistory {
 
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
-    private PlatformUser platformUser;
+    private AppUser appUser;
 
     private String movieId;
 

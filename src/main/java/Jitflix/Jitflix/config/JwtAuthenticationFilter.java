@@ -1,7 +1,7 @@
 package Jitflix.Jitflix.config;
 
 import Jitflix.Jitflix.service.JwtService;
-import Jitflix.Jitflix.service.PlatformUserService;
+import Jitflix.Jitflix.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +22,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
 
-    private final PlatformUserService platformUserService;
+    private final UserService userService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         final String authHeader = request.getHeader("Authorization");
-        System.out.println("authHeader: " + authHeader);
+
         final String jwt;
         final String userEmail;
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -40,14 +40,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         jwt = authHeader.substring(7);
         userEmail = jwtService.extractUsername(jwt);
-        System.out.println("userEmail: " + userEmail);
+
         if (userEmail != null &&
             SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = platformUserService.getUserByEmail(
+            UserDetails userDetails = userService.getUserByEmail(
                     userEmail);
-            System.out.println("userDetails: " + userDetails.getUsername());
-            System.out.println("userDetails: " + userDetails.getPassword());
+
+
             if (jwtService.validateToken(jwt, userDetails)) {
                 System.out.println("jwtService.validateToken");
                 UsernamePasswordAuthenticationToken authToken =
