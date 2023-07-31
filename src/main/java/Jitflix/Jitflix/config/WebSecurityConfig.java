@@ -43,8 +43,10 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests(
                 a -> a.requestMatchers("/api/v1/auth/**")
                         .permitAll()
+                        .requestMatchers("/api/v1/movies/**").permitAll()
                         .anyRequest()
                         .authenticated());
+       
         http.sessionManagement(
                 s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.authenticationProvider(authenticationProvider)
