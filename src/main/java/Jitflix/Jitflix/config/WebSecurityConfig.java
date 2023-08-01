@@ -1,5 +1,6 @@
 package Jitflix.Jitflix.config;
 
+import Jitflix.Jitflix.auth.AuthEntryPointJwt;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,9 @@ public class WebSecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationProvider authenticationProvider;
 
+
+    private final AuthEntryPointJwt authEntryPointJwt;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 //        http.csrf(c -> c.disable());
@@ -38,7 +42,15 @@ public class WebSecurityConfig {
                     return conf;
                 }
         ));
-
+//        http.exceptionHandling(e -> e
+//                .authenticationEntryPoint(
+////                        (request, response, ex) -> {
+////                            response.sendError(
+////                                    HttpServletResponse.SC_UNAUTHORIZED,
+////                                    ex.getMessage());
+////                        })
+//                        authEntryPointJwt
+//                ));
 
         http.authorizeHttpRequests(
                 a -> a.requestMatchers("/api/v1/auth/**")
@@ -46,7 +58,15 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/v1/movies/**").permitAll()
                         .anyRequest()
                         .authenticated());
-       
+//                .exceptionHandling(e -> e.authenticationEntryPoint(
+//                        ((request, response, authException) -> {
+//                            authException.getStackTrace();
+//                            response.sendError(
+//                                    HttpServletResponse.SC_NOT_FOUND,
+//                                    authException.getMessage());
+//                        })
+//                ));
+
         http.sessionManagement(
                 s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.authenticationProvider(authenticationProvider)

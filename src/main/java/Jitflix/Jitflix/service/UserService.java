@@ -18,7 +18,7 @@ public class UserService implements UserDetailsService {
 
     public AppUser getUserByEmail(String email) throws
             UsernameNotFoundException {
-        return userRepository.findUserByEmail(email);
+        return userRepository.findUserByEmail(email).orElseThrow();
 
     }
 
@@ -50,6 +50,6 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws
             UsernameNotFoundException {
-        return userRepository.findUserByEmail(username);
+        return userRepository.findUserByEmail(username).orElseThrow();
     }
 }
