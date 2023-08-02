@@ -3,6 +3,8 @@ package Jitflix.Jitflix.config;
 import Jitflix.Jitflix.service.JwtService;
 import Jitflix.Jitflix.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,7 +40,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             final String userEmail;
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 filterChain.doFilter(request, response);
+
                 return;
+
             }
             jwt = authHeader.substring(7);
             userEmail = jwtService.extractUsername(jwt);
@@ -52,7 +56,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
                 if (jwtService.validateToken(jwt, userDetails)) {
-                    System.out.println("jwtService.validateToken");
+
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails, null,
@@ -66,17 +70,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"message\":\"Token expired\"}");
-            response.getWriter().flush();
-            return;
+            request.setAttribute("exception", "ExpiredJwtException");
+            throw e;
+        } catch (SignatureException e) {
+            request.setAttribute("exception", "SignatureException");
+            throw e;
+        } catch (MalformedJwtException e) {
+            request.setAttribute("exception", "MalformedJwtException");
+            throw e;
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.getWriter().write(e.getMessage());
-            response.getWriter().flush();
-            return;
+            request.setAttribute("exception", e);
+            throw e;
+
         }
 
     }

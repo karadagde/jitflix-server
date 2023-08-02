@@ -1,0 +1,1 @@
+package Jitflix.Jitflix.exception;import lombok.AllArgsConstructor;import lombok.Data;import lombok.NoArgsConstructor;@NoArgsConstructor@AllArgsConstructor@Datapublic class CustomErrorResponse {    private boolean flag;    private Integer code;    private String message;    private Object error;}

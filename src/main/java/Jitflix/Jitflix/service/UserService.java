@@ -18,7 +18,14 @@ public class UserService implements UserDetailsService {
 
     public AppUser getUserByEmail(String email) throws
             UsernameNotFoundException {
-        return userRepository.findUserByEmail(email).orElseThrow();
+        AppUser foundUser = userRepository.findUserByEmail(email);
+
+        if (foundUser != null) {
+            return foundUser;
+        } else {
+            throw new UsernameNotFoundException("User not found");
+
+        }
 
     }
 
@@ -50,6 +57,17 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws
             UsernameNotFoundException {
-        return userRepository.findUserByEmail(username).orElseThrow();
+
+        AppUser foundUser = userRepository.findUserByEmail(username);
+
+        if (foundUser != null) {
+            return foundUser;
+        } else {
+            throw new UsernameNotFoundException("User not found");
+
+        }
+//        } catch (Exception e) {
+//            throw new BadCredentialsException("User not found");
+//        }
     }
 }

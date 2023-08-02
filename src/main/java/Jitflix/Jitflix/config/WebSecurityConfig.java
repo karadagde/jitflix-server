@@ -1,6 +1,8 @@
 package Jitflix.Jitflix.config;
 
 import Jitflix.Jitflix.auth.AuthEntryPointJwt;
+import Jitflix.Jitflix.exception.CustomBearerTokenAccessDeniedHandler;
+import Jitflix.Jitflix.exception.CustomBearerTokenAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +29,11 @@ public class WebSecurityConfig {
 
     private final AuthEntryPointJwt authEntryPointJwt;
 
+    private final CustomBearerTokenAuthenticationEntryPoint customBearerTokenAuthenticationEntryPoint;
+
+    private final CustomBearerTokenAccessDeniedHandler customBearerTokenAccessDeniedHandler;
+
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 //        http.csrf(c -> c.disable());
@@ -42,8 +49,7 @@ public class WebSecurityConfig {
                     return conf;
                 }
         ));
-        http.exceptionHandling(e -> e
-                .authenticationEntryPoint(authEntryPointJwt));
+
 
         http.authorizeHttpRequests(
                 a -> a.requestMatchers("/api/v1/auth/**")
@@ -51,13 +57,23 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/v1/movies/all/").permitAll()
                         .anyRequest()
                         .authenticated());
+        http.exceptionHandling(e -> e
+//                .authenticationEntryPoint(authEntryPointJwt));
+                        .authenticationEntryPoint(
+                                customBearerTokenAuthenticationEntryPoint)
+                        .accessDeniedHandler(customBearerTokenAccessDeniedHandler)
 
+        );
 
         http.sessionManagement(
                 s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        http.authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+
+//        http.authenticationProvider(authenticationProvider)
+//        don't know
+//        why absence of this line is not causing any error or behaviour change
+
+        http.addFilterBefore(jwtAuthenticationFilter,
+                UsernamePasswordAuthenticationFilter.class);
 
 
         return http.build();
