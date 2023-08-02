@@ -8,7 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 
-@EntityScan({"Jitflix.Jitflix.entity", "Jitflix.Jitflix.entity,pg"})
+@EntityScan({"Jitflix.Jitflix.entity", "Jitflix.Jitflix.entity.pg"})
 @EnableWebMvc
 @EnableWebSecurity
 @SpringBootApplication

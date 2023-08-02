@@ -42,30 +42,16 @@ public class WebSecurityConfig {
                     return conf;
                 }
         ));
-//        http.exceptionHandling(e -> e
-//                .authenticationEntryPoint(
-////                        (request, response, ex) -> {
-////                            response.sendError(
-////                                    HttpServletResponse.SC_UNAUTHORIZED,
-////                                    ex.getMessage());
-////                        })
-//                        authEntryPointJwt
-//                ));
+        http.exceptionHandling(e -> e
+                .authenticationEntryPoint(authEntryPointJwt));
 
         http.authorizeHttpRequests(
                 a -> a.requestMatchers("/api/v1/auth/**")
                         .permitAll()
-                        .requestMatchers("/api/v1/movies/**").permitAll()
+                        .requestMatchers("/api/v1/movies/all/").permitAll()
                         .anyRequest()
                         .authenticated());
-//                .exceptionHandling(e -> e.authenticationEntryPoint(
-//                        ((request, response, authException) -> {
-//                            authException.getStackTrace();
-//                            response.sendError(
-//                                    HttpServletResponse.SC_NOT_FOUND,
-//                                    authException.getMessage());
-//                        })
-//                ));
+
 
         http.sessionManagement(
                 s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

@@ -41,7 +41,7 @@ public class MovieController {
                                     HttpServletRequest request,
                                     HttpServletResponse response) {
         System.out.println(request);
-        return movieService.getAllMovies(page = 0, size = 20);
+        return movieService.getAllMovies(page, size);
 
     }
 
