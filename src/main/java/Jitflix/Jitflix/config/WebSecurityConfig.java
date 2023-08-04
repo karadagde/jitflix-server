@@ -40,7 +40,8 @@ public class WebSecurityConfig {
         http.csrf(c -> c.ignoringRequestMatchers("/api/v1/auth/**"));
         http.cors(c -> c.configurationSource(request -> {
                     CorsConfiguration conf = new CorsConfiguration();
-                    conf.setAllowedOrigins(List.of("http://localhost:4200"));
+                    conf.setAllowedOrigins(List.of("http://localhost:4200",
+                            "https://jitflix.netlify.app"));
                     conf.setAllowedMethods(
                             Arrays.asList("GET", "POST", "PUT", "DELETE"));
                     conf.setAllowCredentials(true);
