@@ -55,7 +55,10 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests(
                 a -> a.requestMatchers("/api/v1/auth/**")
                         .permitAll()
-                        .requestMatchers("/api/v1/movies/watch/**").permitAll()
+                        .requestMatchers("/api/v1/users/user/check/{email}")
+                        .permitAll()
+                        .requestMatchers("/api/v1/movies/watch/**")
+                        .permitAll()
                         .anyRequest()
                         .authenticated());
         http.exceptionHandling(e -> e

@@ -1,5 +1,6 @@
 package Jitflix.Jitflix.config;
 
+import Jitflix.Jitflix.entity.pg.AppUser;
 import Jitflix.Jitflix.service.JwtService;
 import Jitflix.Jitflix.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -13,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -51,7 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().getAuthentication() ==
                 null) {
 
-                UserDetails userDetails = userService.getUserByEmail(
+                AppUser userDetails = userService.getUserByEmail(
                         userEmail);
 
 
