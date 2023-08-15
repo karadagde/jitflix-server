@@ -1,0 +1,34 @@
+spring:
+  datasource:
+    primary:
+      url: ${PRIMARY_DB_URL}
+      driver-class-name: ${PRIMARY_DB_DRIVER}
+      username: ${PRIMARY_DB_USER}
+      password: ${PRIMARY_DB_PASSWORD}
+    secondary:
+      url: ${SECONDARY_DB_URL}
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        generate-ddl: true
+        dialect: ${JPA_DIALECT}
+  security:
+    user:
+      password: ${SEC_USER_PASSWORD}
+
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  expiration: 86400000 # 24hours
+  refresh-token:
+    expiration: 604800000 # 7 days
+
+aws:
+  region: ${AWS_REGION}
+  s3:
+    buckets:
+      bucket: ${S3_BUCKET}
+

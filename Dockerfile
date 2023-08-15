@@ -12,12 +12,27 @@
 
 
 
-FROM openjdk:17-slim
-
+FROM openjdk:17-slim as base
 WORKDIR /app
+COPY .mvn/ .mvn
+COPY mvnw pom.xml ./
+RUN ./mvnw dependency:resolve
+COPY src ./src
 
-COPY target/Jitflix-0.0.1-SNAPSHOT.jar app.jar
 
+FROM base as development
+CMD ["./mvnw", "spring-boot:run", "-Dspring-boot.run.profiles=postgre", "-Dspring-boot.run.jvmArguments='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000'"]
+
+
+FROM base as build
+RUN ./mvnw package
+
+
+FROM openjdk:17-slim as production
 EXPOSE 8080
+COPY --from=build /app/target/jitflix-*.jar /jitflix.jar
+CMD ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/jitflix.jar"]
 
-ENTRYPOINT ["java","-jar","app.jar"]
+
+##CMD ["./mvnw", "spring-boot:run","-Dspring-boot.run.profiles=postgre"]
+
