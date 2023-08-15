@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/v1/users")
 public class UserController {
 
     private final UserService userService;
@@ -21,6 +21,20 @@ public class UserController {
     public AppUser getUserByEmail(@PathVariable String email) {
         return userService.getUserByEmail(email);
     }
+
+
+    @GetMapping("/user/check/{email}")
+    public Boolean checkIfUserExists(@PathVariable String email) throws
+            IOException {
+        try {
+            AppUser user = userService.getUserByEmail(email);
+            return user != null;
+
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 
     @PutMapping(path = "/update", consumes = "application/json",
                 produces = "application/json")

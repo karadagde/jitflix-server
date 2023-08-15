@@ -134,7 +134,8 @@ public class MovieController {
 
         if (segmentResource.exists()) {
             return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType("video/MP2T"))
+                    .contentType(
+                            MediaType.parseMediaType("application/x-mpegURL"))
                     .body(segmentResource);
         } else {
             return ResponseEntity.notFound().build();
