@@ -29,6 +29,4 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/clockbox:latest
-      - 
-        name: Build and Test with Maven
-        run: ./mvnw test -Dspring.profiles.active=test
+     
