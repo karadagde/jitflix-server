@@ -20,10 +20,10 @@ RUN ./mvnw dependency:resolve
 COPY src ./src
 
 FROM base as test
-RUN ["./mvnw", "test", "-Dspring.profiles.active=test"]
+RUN ["./mvnw", "test"]
 
 FROM base as development
-CMD ["./mvnw", "spring-boot:run", "-Dspring-boot.run.profiles=postgre", "-Dspring-boot.run.jvmArguments='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000'"]
+CMD ["./mvnw", "spring-boot:run", "-Dspring.profiles.active=development", "-Dspring.config.location=file:/app/src/main/resources/", "-Dspring-boot.run.jvmArguments='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000'"]
 
 
 FROM base as build
@@ -33,7 +33,7 @@ RUN ./mvnw package
 FROM openjdk:17-slim as production
 EXPOSE 8080
 COPY --from=build /app/target/jitflix-*.jar /jitflix.jar
-CMD ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/jitflix.jar"]
+CMD ["java", "-Dspring.profiles.active=production", "-Dspring.config.location=file:/app/src/main/resources/", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/jitflix.jar"]
 
 
 ##CMD ["./mvnw", "spring-boot:run","-Dspring-boot.run.profiles=postgre"]
