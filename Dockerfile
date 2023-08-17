@@ -59,5 +59,3 @@ EXPOSE 8080
 #COPY --from=build /app/target/jitflix-*.jar /jitflix.jar
 COPY --from=build /app/target/Jitflix-0.0.1-SNAPSHOT.jar /jitflix.jar
 CMD ["java", "-Dspring.profiles.active=production", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/jitflix.jar"]
-
-
