@@ -1,6 +1,5 @@
 package Jitflix.Jitflix.entity.pg;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +18,7 @@ public class ViewingHistory {
 
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
-    @JsonBackReference
+//    @JsonBackReference
     private AppUser appUser;
 
     private String movieId;

@@ -1,6 +1,5 @@
 package Jitflix.Jitflix.entity.pg;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -34,7 +33,7 @@ public class AppUser implements UserDetails {
 //    private List<String> ipAddresses;
 
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
-    @JsonManagedReference
+//    @JsonManagedReference
     private List<ViewingHistory> viewingHistories;
     @Enumerated(EnumType.STRING)
     private Role role;

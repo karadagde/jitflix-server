@@ -1,9 +1,12 @@
 package Jitflix.Jitflix.controller;
 
+import Jitflix.Jitflix.dto.ViewingHistoryDTO;
 import Jitflix.Jitflix.entity.pg.AppUser;
 import Jitflix.Jitflix.entity.pg.ViewingHistory;
+import Jitflix.Jitflix.service.EntityToDtoConverter;
 import Jitflix.Jitflix.service.UserService;
 import Jitflix.Jitflix.service.ViewingHistoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +16,8 @@ public class ViewingHistoryController {
 
     private final ViewingHistoryService historyService;
     private final UserService userService;
+    @Autowired
+    private EntityToDtoConverter converter;
 
     public ViewingHistoryController(ViewingHistoryService viewingHistoryService,
                                     UserService userService) {
@@ -22,7 +27,7 @@ public class ViewingHistoryController {
 
 
     @GetMapping("/history/{movieId}/{email}")
-    public ResponseEntity<ViewingHistory> getViewingHistory(
+    public ResponseEntity<ViewingHistoryDTO> getViewingHistory(
             @PathVariable String movieId,
             @PathVariable String email) {
         System.out.println("movieId: " + movieId);
@@ -31,11 +36,12 @@ public class ViewingHistoryController {
         if (appUser == null) {
             return ResponseEntity.badRequest().build();
         }
-
-
-        return ResponseEntity.ok(
+        ViewingHistory viewingHistory =
                 historyService.getViewingHistoryByMovieIdAndAppUser(movieId,
-                        appUser));
+                        appUser);
+        ViewingHistoryDTO dto = converter.convertToDto(viewingHistory);
+
+        return ResponseEntity.ok(dto);
 
     }
 
