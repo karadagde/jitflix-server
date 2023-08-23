@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
-@RequestMapping("/api/v1/watch")
+@RequestMapping("/api/v1/watch/history")
 public class ViewingHistoryController {
 
     private final ViewingHistoryService historyService;
@@ -26,21 +28,23 @@ public class ViewingHistoryController {
     }
 
 
-    @GetMapping("/history/{movieId}/{email}")
+    @GetMapping("/{movieId}/{email}")
     public ResponseEntity<ViewingHistoryDTO> getViewingHistory(
             @PathVariable String movieId,
-            @PathVariable String email) {
+            @PathVariable String email) throws IOException {
         System.out.println("movieId: " + movieId);
         System.out.println("email: " + email);
         AppUser appUser = userService.getUserByEmail(email);
         if (appUser == null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
         ViewingHistory viewingHistory =
                 historyService.getViewingHistoryByMovieIdAndAppUser(movieId,
                         appUser);
         ViewingHistoryDTO dto = converter.convertToDto(viewingHistory);
-
+        if (dto == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(dto);
 
     }
