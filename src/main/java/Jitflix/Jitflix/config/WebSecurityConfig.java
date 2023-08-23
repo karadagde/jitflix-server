@@ -37,7 +37,8 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 //        http.csrf(c -> c.disable());
-        http.csrf(c -> c.ignoringRequestMatchers("/api/v1/auth/**"));
+        http.csrf(c -> c.ignoringRequestMatchers("/api/v1/auth/**",
+                "/api/v1/watch/history/**"));
         http.cors(c -> c.configurationSource(request -> {
                     CorsConfiguration conf = new CorsConfiguration();
                     conf.setAllowedOrigins(List.of("http://localhost:4200",

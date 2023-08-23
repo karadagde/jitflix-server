@@ -103,7 +103,7 @@ public class MovieController {
 
     // read local data instead of s3 due to free tier limitations
 
-    @GetMapping("/watch/{movieId}/playlist/local")
+    @GetMapping("/watch/{movieId}/playlist/master.m3u8")
     public ResponseEntity<?> getMasterLocal(@PathVariable String movieId) throws
             IOException {
 
@@ -113,8 +113,8 @@ public class MovieController {
                 movieId) + "/master.m3u8");
         if (playlistResource.exists()) {
             return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(
-                            "application/vnd.apple.mpegurl"))
+                    .contentType(
+                            MediaType.parseMediaType("application/x-mpegURL"))
                     .body(playlistResource);
         } else {
             return ResponseEntity.ok("Master playlist not found");
