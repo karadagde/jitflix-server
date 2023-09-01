@@ -1,0 +1,1 @@
+package Jitflix.Jitflix.controller;import Jitflix.Jitflix.entity.mongo.Comment;import Jitflix.Jitflix.entity.mongo.Movie;import lombok.Builder;import lombok.Getter;import lombok.Setter;import java.util.List;@Getter@Setter@Builderpublic class MovieResponse {    private Movie movie;    private List<Comment> comments;}

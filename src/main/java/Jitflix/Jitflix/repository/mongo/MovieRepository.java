@@ -1,9 +1,9 @@
 package Jitflix.Jitflix.repository.mongo;
 
-import java.util.List;
-
-import Jitflix.Jitflix.entity.Movie;
+import Jitflix.Jitflix.entity.mongo.Movie;
 import org.springframework.data.mongodb.repository.MongoRepository;
+
+import java.util.List;
 
 public interface MovieRepository extends MongoRepository<Movie, String> {
     List<Movie> findByTitle(String title);

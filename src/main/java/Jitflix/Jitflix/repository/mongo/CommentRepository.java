@@ -1,0 +1,1 @@
+package Jitflix.Jitflix.repository.mongo;import Jitflix.Jitflix.entity.mongo.Comment;import org.bson.types.ObjectId;import org.springframework.data.mongodb.repository.MongoRepository;import java.util.List;public interface CommentRepository extends MongoRepository<Comment, String> {    List<Comment> findByMovieId(ObjectId movieId);}

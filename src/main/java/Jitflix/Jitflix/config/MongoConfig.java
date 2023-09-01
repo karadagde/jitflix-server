@@ -1,6 +1,6 @@
 package Jitflix.Jitflix.config;
 
-import Jitflix.Jitflix.entity.Movie;
+import Jitflix.Jitflix.entity.mongo.Movie;
 import com.mongodb.ConnectionString;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -37,7 +37,7 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
 
     @Override
     protected Collection<String> getMappingBasePackages() {
-        return Collections.singletonList("Jitflix.Jitflix.entity");
+        return Collections.singletonList("Jitflix.Jitflix.entity.mongo");
     }
 
     @Bean

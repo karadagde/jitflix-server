@@ -1,10 +1,9 @@
 package Jitflix.Jitflix.service;
 
-import Jitflix.Jitflix.entity.Movie;
+import Jitflix.Jitflix.entity.mongo.Movie;
 import Jitflix.Jitflix.repository.mongo.MovieRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,31 +18,35 @@ public class MovieService {
     }
 
 
-    public Movie getMovieById(String id){
+    public Movie getMovieById(String id) {
         return movieRepository.findById(id).orElse(null);
     }
 
-    public Page<Movie> getAllMovies(int page, int size){
+    public Page<Movie> getAllMovies(int page, int size) {
         return movieRepository.findAll(PageRequest.of(page, size));
-    } public List<Movie> getEntireMovies(){
+    }
+
+    public List<Movie> getEntireMovies() {
         return movieRepository.findAll();
     }
 
-    public Movie saveMovie(Movie movie){
+    public Movie saveMovie(Movie movie) {
         return movieRepository.save(movie);
     }
 
-    public void deleteMovie(String id){
+    public void deleteMovie(String id) {
         movieRepository.deleteById(id);
     }
 
-    public List<Movie> getMovieByTitle(String title){
+    public List<Movie> getMovieByTitle(String title) {
         return movieRepository.findByTitle(title);
     }
-    public Movie updateMovie(Movie movie){
-        Movie existingMovie = movieRepository.findById(movie.getId()).orElse(null);
 
-        if (existingMovie == null){
+    public Movie updateMovie(Movie movie) {
+        Movie existingMovie = movieRepository.findById(movie.getId())
+                .orElse(null);
+
+        if (existingMovie == null) {
             return null;
         }
 
@@ -69,7 +72,6 @@ public class MovieService {
 //        existingMovie.setTomatoes(movie.getTomatoes());
         return movieRepository.save(existingMovie);
     }
-
 
 
 }

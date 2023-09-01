@@ -1,11 +1,11 @@
-package Jitflix.Jitflix.entity;
+package Jitflix.Jitflix.entity.mongo;
 
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@Document(collection="movies")
+@Document(collection = "movies")
 public class Movie {
     @Id
     private String id;
@@ -32,10 +32,10 @@ public class Movie {
     private List<String> directors;
     private List<String> writers;
     private String rated;
-//    private String awards;
+    //    private String awards;
     private String lastupdated;
     private int year;
-//    private String imdb;
+    //    private String imdb;
     private String type;
 
 
