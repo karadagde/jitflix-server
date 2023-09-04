@@ -8,6 +8,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor
@@ -34,18 +36,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         try {
-            final String authHeader = request.getHeader("Authorization");
 
-            final String jwt;
-            final String userEmail;
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                filterChain.doFilter(request, response);
-
-                return;
-
+            Cookie[] cookies = request.getCookies();
+            System.out.println("cookies: " + Arrays.toString(cookies));
+            String jwt = null;
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("access_token".equals(cookie.getName())) {
+                        jwt = cookie.getValue();
+                        break;
+                    }
+                }
             }
-            jwt = authHeader.substring(7);
-            userEmail = jwtService.extractUsername(jwt);
+            System.out.println("jwt: " + jwt);
+            if (jwt == null) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+            final String userEmail = jwtService.extractUsername(jwt);
 
             if (userEmail != null &&
                 SecurityContextHolder.getContext().getAuthentication() ==
