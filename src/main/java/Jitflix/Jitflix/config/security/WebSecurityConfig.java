@@ -1,4 +1,4 @@
-package Jitflix.Jitflix.config;
+package Jitflix.Jitflix.config.security;
 
 import Jitflix.Jitflix.exception.CustomBearerTokenAccessDeniedHandler;
 import Jitflix.Jitflix.exception.CustomBearerTokenAuthenticationEntryPoint;

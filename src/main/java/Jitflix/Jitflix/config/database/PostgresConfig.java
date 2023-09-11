@@ -1,4 +1,4 @@
-package Jitflix.Jitflix.config;
+package Jitflix.Jitflix.config.database;
 
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;

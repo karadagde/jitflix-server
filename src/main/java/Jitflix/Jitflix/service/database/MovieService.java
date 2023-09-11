@@ -1,4 +1,4 @@
-package Jitflix.Jitflix.service;
+package Jitflix.Jitflix.service.database;
 
 import Jitflix.Jitflix.entity.mongo.Movie;
 import Jitflix.Jitflix.repository.mongo.MovieRepository;

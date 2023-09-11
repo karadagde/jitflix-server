@@ -1,7 +1,7 @@
 package Jitflix.Jitflix.controller;
 
 import Jitflix.Jitflix.entity.pg.AppUser;
-import Jitflix.Jitflix.service.UserService;
+import Jitflix.Jitflix.service.database.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

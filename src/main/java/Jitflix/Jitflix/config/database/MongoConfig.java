@@ -1,4 +1,4 @@
-package Jitflix.Jitflix.config;
+package Jitflix.Jitflix.config.database;
 
 import Jitflix.Jitflix.entity.mongo.Movie;
 import com.mongodb.ConnectionString;

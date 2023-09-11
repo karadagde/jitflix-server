@@ -1,8 +1,8 @@
-package Jitflix.Jitflix.config;
+package Jitflix.Jitflix.config.security;
 
 import Jitflix.Jitflix.entity.pg.AppUser;
-import Jitflix.Jitflix.service.JwtService;
-import Jitflix.Jitflix.service.UserService;
+import Jitflix.Jitflix.service.database.UserService;
+import Jitflix.Jitflix.service.jwt.JwtService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
