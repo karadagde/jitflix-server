@@ -63,14 +63,6 @@ public class WebSecurityConfig {
         http.sessionManagement(
                 s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-//        CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
-//        // set the name of the attribute the CsrfToken will be populated on
-//        requestHandler.setCsrfRequestAttributeName(null);
-//        http
-//
-//                .csrf((csrf) -> csrf
-//                        .csrfTokenRequestHandler(requestHandler)
-//                );
 
         CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
         XorCsrfTokenRequestAttributeHandler delegate = new XorCsrfTokenRequestAttributeHandler();
@@ -84,14 +76,6 @@ public class WebSecurityConfig {
                         .csrfTokenRepository(tokenRepository)
                         .csrfTokenRequestHandler(requestHandler)
                 );
-
-//        http.csrf((csrf) -> csrf
-//                                .csrfTokenRepository(
-//                                        CookieCsrfTokenRepository.withHttpOnlyFalse())
-////                        .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler())
-//                )
-//                .addFilterAfter(new CsrfCookieFilter(),
-//                        CsrfFilter.class);
 
 
         http.authorizeHttpRequests(
