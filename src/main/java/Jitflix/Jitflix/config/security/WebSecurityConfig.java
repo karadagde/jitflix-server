@@ -65,7 +65,13 @@ public class WebSecurityConfig {
                 s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 
-        CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        CookieCsrfTokenRepository tokenRepository =
+                CookieCsrfTokenRepository.withHttpOnlyFalse();
+        tokenRepository.setCookieCustomizer(cookie -> {
+            cookie.secure(true);
+            cookie.sameSite("None");
+            cookie.path("/");
+        });
         XorCsrfTokenRequestAttributeHandler delegate = new XorCsrfTokenRequestAttributeHandler();
         // set the name of the attribute the CsrfToken will be populated on
         delegate.setCsrfRequestAttributeName("_csrf");
