@@ -12,9 +12,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HeaderWriterLogoutHandler;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRequestHandler;
-import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter;
 import org.springframework.web.cors.CorsConfiguration;
 
@@ -35,7 +32,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-
+        http.csrf(AbstractHttpConfigurer::disable);
         http.cors(c -> c.configurationSource(request -> {
                     CorsConfiguration conf = new CorsConfiguration();
                     conf.setAllowedOrigins(List.of("http://localhost:4200",
@@ -46,19 +43,18 @@ public class WebSecurityConfig {
                                     "HEAD", "OPTIONS"));
                     conf.setAllowCredentials(true);
                     conf.setAllowedHeaders(List.of("*"));
-                    conf.addExposedHeader("XSRF-TOKEN");
+//                    conf.addExposedHeader("XSRF-TOKEN");
                     return conf;
                 }
         ));
 
 
         http.exceptionHandling(e -> e
-
                 .authenticationEntryPoint(
                         customBearerTokenAuthenticationEntryPoint)
                 .accessDeniedHandler(customBearerTokenAccessDeniedHandler)
-
         );
+
         http.addFilterBefore(jwtAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class);
 
@@ -66,20 +62,20 @@ public class WebSecurityConfig {
                 s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 
-        CookieCsrfTokenRepository tokenRepository =
-                CookieCsrfTokenRepository.withHttpOnlyFalse();
-        tokenRepository.setCookieCustomizer(cookie -> {
-            cookie.path("/");
-            cookie.secure(true);
-            cookie.sameSite("None");
-        });
-        XorCsrfTokenRequestAttributeHandler delegate = new XorCsrfTokenRequestAttributeHandler();
-        // set the name of the attribute the CsrfToken will be populated on
-        delegate.setCsrfRequestAttributeName("_csrf");
-        // Use only the handle() method of XorCsrfTokenRequestAttributeHandler and the
-        // default implementation of resolveCsrfTokenValue() from CsrfTokenRequestHandler
-        CsrfTokenRequestHandler requestHandler = delegate::handle;
-        http.csrf(AbstractHttpConfigurer::disable);
+//        CookieCsrfTokenRepository tokenRepository =
+//                CookieCsrfTokenRepository.withHttpOnlyFalse();
+//        tokenRepository.setCookieCustomizer(cookie -> {
+//            cookie.path("/");
+//            cookie.secure(true);
+//            cookie.sameSite("None");
+//        });
+//        XorCsrfTokenRequestAttributeHandler delegate = new XorCsrfTokenRequestAttributeHandler();
+//        // set the name of the attribute the CsrfToken will be populated on
+//        delegate.setCsrfRequestAttributeName("_csrf");
+//        // Use only the handle() method of XorCsrfTokenRequestAttributeHandler and the
+//        // default implementation of resolveCsrfTokenValue() from CsrfTokenRequestHandler
+//        CsrfTokenRequestHandler requestHandler = delegate::handle;
+
 //                .csrf((csrf) -> csrf
 //                        .csrfTokenRepository(tokenRepository)
 //                        .csrfTokenRequestHandler(requestHandler)
