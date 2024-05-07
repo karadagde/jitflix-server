@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -68,9 +69,9 @@ public class WebSecurityConfig {
         CookieCsrfTokenRepository tokenRepository =
                 CookieCsrfTokenRepository.withHttpOnlyFalse();
         tokenRepository.setCookieCustomizer(cookie -> {
+            cookie.path("/");
             cookie.secure(true);
             cookie.sameSite("None");
-            cookie.path("/");
         });
         XorCsrfTokenRequestAttributeHandler delegate = new XorCsrfTokenRequestAttributeHandler();
         // set the name of the attribute the CsrfToken will be populated on
@@ -78,11 +79,11 @@ public class WebSecurityConfig {
         // Use only the handle() method of XorCsrfTokenRequestAttributeHandler and the
         // default implementation of resolveCsrfTokenValue() from CsrfTokenRequestHandler
         CsrfTokenRequestHandler requestHandler = delegate::handle;
-        http
-                .csrf((csrf) -> csrf
-                        .csrfTokenRepository(tokenRepository)
-                        .csrfTokenRequestHandler(requestHandler)
-                );
+        http.csrf(AbstractHttpConfigurer::disable);
+//                .csrf((csrf) -> csrf
+//                        .csrfTokenRepository(tokenRepository)
+//                        .csrfTokenRequestHandler(requestHandler)
+//                );
 
 
         http.authorizeHttpRequests(
