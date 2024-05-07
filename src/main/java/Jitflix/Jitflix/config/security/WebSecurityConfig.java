@@ -38,6 +38,7 @@ public class WebSecurityConfig {
         http.cors(c -> c.configurationSource(request -> {
                     CorsConfiguration conf = new CorsConfiguration();
                     conf.setAllowedOrigins(List.of("http://localhost:4200",
+                            "https://delightful-wave-0ae018003.5.azurestaticapps.net",
                             "https://jitflix.netlify.app"));
                     conf.setAllowedMethods(
                             Arrays.asList("GET", "POST", "PUT", "DELETE",
