@@ -1,0 +1,1 @@
+package Jitflix.Jitflix.dto;public record LogoutSuccess(String message) {}

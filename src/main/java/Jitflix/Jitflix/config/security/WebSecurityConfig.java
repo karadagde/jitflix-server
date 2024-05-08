@@ -102,7 +102,8 @@ public class WebSecurityConfig {
                 .deleteCookies("access_token", "refresh_token", "XSRF-TOKEN",
                         "JSESSIONID")
                 .clearAuthentication(true)
-                .logoutSuccessUrl("/api/v1/auth/initial")
+                .clearAuthentication(true)
+                .logoutSuccessUrl("/api/v1/auth/logout-success")
 
         );
 
