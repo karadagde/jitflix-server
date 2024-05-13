@@ -14,7 +14,7 @@ public class WebSocketConfig
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new WebSocketHandler(), "/socket")
+        registry.addHandler(new WebSocketHandler(), "/video-call/{room-id}")
                 .setAllowedOrigins("*");
     }
 

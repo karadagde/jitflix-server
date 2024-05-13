@@ -1,0 +1,1 @@
+package Jitflix.Jitflix.model.data;public enum ConnectionType {    OFFER, ANSWER}
