@@ -1,7 +1,9 @@
 package Jitflix.Jitflix.WebSocket;
 
 import Jitflix.Jitflix.model.data.ConnectionType;
-import Jitflix.Jitflix.model.data.VideoCallSocketConnectionData;
+import Jitflix.Jitflix.model.data.ParticipantWRTCData;
+import Jitflix.Jitflix.model.data.VideoCallData;
+import Jitflix.Jitflix.service.videcall.WebsocketService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -9,105 +11,120 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.net.URI;
+import java.security.Principal;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class WebSocketHandler extends TextWebSocketHandler {
 
-    private final Map<String, VideoCallSocketConnectionData> videoCallSocketConnectionDataList = new ConcurrentHashMap<>();
+    private final WebsocketService websocketService;
+    Logger logger = Logger.getLogger(WebSocketHandler.class.getName());
+
+    public WebSocketHandler(WebsocketService websocketService) {
+        this.websocketService = websocketService;
+    }
 
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message)
             throws InterruptedException, IOException {
         if (session.isOpen()) {
-            String userName = session.getPrincipal().getName();
-            String roomId = extractRoomId(session.getUri().toString());
-            VideoCallSocketConnectionData.ParticipantWRTCData otherParticipant =
-                    videoCallSocketConnectionDataList.get(roomId)
-                            .getParticipants()
-                            .entrySet()
-                            .stream()
-                            .filter(
-                                    entry -> !entry.getKey().equals(userName))
-                            .findFirst()
-                            .get()
-                            .getValue();
+            Principal userPrincipal = session.getPrincipal();
+            if (userPrincipal == null) {
+                session.close(CloseStatus.NOT_ACCEPTABLE);
+                return;
+            }
+            String userName = userPrincipal.getName();
+            String roomId = extractRoomId(
+                    Objects.requireNonNull(session.getUri()));
 
+
+            ParticipantWRTCData peerData = websocketService.getPeerData(roomId,
+                    userName);
 
             ObjectMapper objectMapper = new ObjectMapper();
             Map<String, String> messageMap = objectMapper.readValue(
                     message.getPayload(), Map.class);
+
+            ParticipantWRTCData currentUser =
+                    websocketService.getParticipant(roomId, userName, session);
             if (messageMap.containsKey("sdp")) {
                 if (message.getPayload().contains("offer")) {
-                    VideoCallSocketConnectionData.ParticipantWRTCData offer = new VideoCallSocketConnectionData.ParticipantWRTCData(
-                            session, userName);
-                    offer.setConnectionType(ConnectionType.OFFER);
-                    offer.getSdp().add(message.getPayload());
-                    otherParticipant.getSession().sendMessage(message);
+                    logger.log(Level.INFO, "Offer received");
+                    logger.log(Level.INFO, message.getPayload());
+                    websocketService.setConnectionType(roomId, userName,
+                            ConnectionType.OFFER);
                 } else if (message.getPayload().contains("answer")) {
-                    VideoCallSocketConnectionData.ParticipantWRTCData answer = new VideoCallSocketConnectionData.ParticipantWRTCData(
-                            session, userName);
-                    answer.setConnectionType(ConnectionType.ANSWER);
-                    answer.getSdp().add(message.getPayload());
+                    websocketService.setConnectionType(roomId, userName,
+                            ConnectionType.ANSWER);
+                }
+                // here we set sdp data of the current user
+                websocketService.setSdp(roomId, userName, message.getPayload());
 
-                    otherParticipant.getSession().sendMessage(message);
-                    session.sendMessage(new TextMessage(
-                            otherParticipant.getSdp().get(0))
-                    );
+                if (peerData != null) {
+                    if (message.getPayload().contains("answer")) {
+                        peerData.getSdp().forEach(sdp -> {
+                            try {
+                                peerData.getSession()
+                                        .sendMessage(new TextMessage(sdp));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    }
+                    peerData.getSession().sendMessage(message);
                 }
             } else if (messageMap.containsKey("candidate")) {
-                VideoCallSocketConnectionData videoCallData = videoCallSocketConnectionDataList.get(
-                        roomId);
-
-                VideoCallSocketConnectionData.ParticipantWRTCData participant = videoCallData.getParticipants()
-                        .get(userName);
-                participant.getIceCandidates().add(message.getPayload());
-                otherParticipant.getSession().sendMessage(message);
+                currentUser.getIceCandidates().add(message.getPayload());
+                if (peerData != null) {
+                    peerData.getSession().sendMessage(message);
+                }
             } else {
                 session.sendMessage(message);
-                otherParticipant.getSession().sendMessage(message);
+                if (peerData != null) {
+                    peerData.getSession().sendMessage(message);
+                }
             }
-
-
         }
     }
+
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws
             Exception {
-        String callId = extractRoomId(String.valueOf(session.getUri()));
-
-        VideoCallSocketConnectionData callData = new VideoCallSocketConnectionData(
-                callId);
-
-        if (!videoCallSocketConnectionDataList.containsKey(callId)) {
-
-            videoCallSocketConnectionDataList.put(callId, callData);
+        Principal userPrincipal = session.getPrincipal();
+        if (userPrincipal == null) {
+            session.close(CloseStatus.NOT_ACCEPTABLE);
+            return;
         }
+        String userName = userPrincipal.getName();
+        String roomId = extractRoomId(
+                Objects.requireNonNull(session.getUri()));
+        websocketService.getVideoCallData(roomId);
+
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session,
                                       CloseStatus status)
             throws Exception {
-        String roomId = extractRoomId(String.valueOf(session.getUri()));
+        String roomId = extractRoomId(Objects.requireNonNull(session.getUri()));
         String userName = session.getPrincipal().getName();
-        VideoCallSocketConnectionData videoCallData =
-                videoCallSocketConnectionDataList.get(roomId);
+        VideoCallData videoCallData = websocketService.getVideoCallData(roomId);
 
         if (videoCallData != null) {
-            VideoCallSocketConnectionData.ParticipantWRTCData participant =
-                    videoCallData.getParticipants().get(userName);
-            if (participant != null) {
-                videoCallData.getParticipants().remove(userName);
+            videoCallData.getParticipants().remove(userName);
+            if (videoCallData.getParticipants().isEmpty()) {
+                websocketService.removeVideoCallData(roomId);
             }
         }
-
     }
 
-    private String extractRoomId(String uri) {
-        return uri.substring(uri.lastIndexOf("/") + 1);
+    private String extractRoomId(URI uri) {
+        return uri.getPath().substring(uri.getPath().lastIndexOf("/") + 1);
     }
 
 }
