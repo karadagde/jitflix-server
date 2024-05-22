@@ -1,6 +1,7 @@
 package Jitflix.Jitflix.config.webSocket;
 
 import Jitflix.Jitflix.WebSocket.WebSocketHandler;
+import Jitflix.Jitflix.service.videcall.WebsocketService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.*;
@@ -12,9 +13,17 @@ import org.springframework.web.socket.config.annotation.*;
 public class WebSocketConfig
         implements WebSocketConfigurer, WebSocketMessageBrokerConfigurer {
 
+
+    private final WebsocketService websocketService;
+
+    public WebSocketConfig(WebsocketService websocketService) {
+        this.websocketService = websocketService;
+    }
+
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new WebSocketHandler(), "/socket")
+        registry.addHandler(new WebSocketHandler(websocketService),
+                        "/video-call/{room-id}")
                 .setAllowedOrigins("*");
     }
 
