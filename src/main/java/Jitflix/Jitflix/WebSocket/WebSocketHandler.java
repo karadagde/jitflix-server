@@ -32,13 +32,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void handleTextMessage(WebSocketSession session, TextMessage message)
             throws InterruptedException, IOException {
         if (session.isOpen()) {
-//            Principal userPrincipal = session.getPrincipal();
-//            if (userPrincipal == null) {
-//                session.close(CloseStatus.NOT_ACCEPTABLE);
-//                return;
-//            }
+            Principal userPrincipal = session.getPrincipal();
+            if (userPrincipal == null) {
+                session.close(CloseStatus.NOT_ACCEPTABLE);
+                return;
+            }
 
-//            String userName = userPrincipal.getName();
+            String userName = userPrincipal.getName();
             String roomId = extractRoomId(
                     Objects.requireNonNull(session.getUri()));
 
@@ -48,9 +48,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 return;
             }
 
-//            boolean isParticipantHost = websocketService.isParticipantHost(
-//                    roomId,
-//                    userName);
+            boolean isParticipantHost = websocketService.isParticipantHost(
+                    roomId,
+                    userName);
 //            ParticipantWRTCData peerData = websocketService.getPeerData(roomId,
 //                    userName);
             List<WebSocketSession> roomSessions =
